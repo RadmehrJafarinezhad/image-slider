@@ -1,6 +1,6 @@
 "use strict"
 
-import createSlider from "./js/slider.js"
+import Slider from "./js/slider.js"
 
 
 const dotContainer = document.getElementById('dot-container');
@@ -18,8 +18,7 @@ async function sliderOneSettings() {
 
     pics = await getDatasFromJSON("sliderImages");
 
-    const slider1 = createSlider();
-    slider1.createImgs();
+    let slider1 = new Slider("img-container",pics,"dot-container","wipe")
 
     document.addEventListener("keydown", slider1.sliderKeyboardControl);
 
@@ -27,15 +26,14 @@ async function sliderOneSettings() {
 
     const right_slider_btn = document.getElementById('right-slider-btn');
 
-    if(!right_slider_btn) console.error("Forbidden: right-slider-btn ID its forbidden.");
+    if(!right_slider_btn) throw new Error("Forbidden:\nright-slider-btn ID its forbidden.");
     else right_slider_btn.addEventListener("click",() => {
         slider1.goNext();
-        slider1.startAutoPlay();
     });
 
     const left_slider_btn = document.getElementById('left-slider-btn')
 
-    if(!left_slider_btn) console.error("Forbidden: right-slider-btn ID its forbidden.");
+    if(!left_slider_btn) throw new Error("Forbidden:\nright-slider-btn ID its forbidden.");
     else left_slider_btn.addEventListener("click",() => {
         slider1.goPrev();
         slider1.startAutoPlay();
@@ -52,7 +50,7 @@ async function getDatasFromJSON(key) {
         let response = await fetch("data.json" );
 
         if(!response.ok){
-            throw new Error("Forbidden : data.json doesn't exist")
+            throw new Error("Forbidden:\ndata.json doesn't exist")
         }
 
         let data = await response.json();
@@ -65,7 +63,3 @@ async function getDatasFromJSON(key) {
 
     }
 }
-
-
-
-mobileNavInit()
