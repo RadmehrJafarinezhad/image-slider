@@ -18,7 +18,7 @@ async function sliderOneSettings() {
 
     pics = await getDatasFromJSON("sliderImages");
 
-    let slider1 = new Slider("img-container",pics,"dot-container","wipe")
+    let slider1 = new Slider("img-container",pics,"dot-container","fade")
 
     document.addEventListener("keydown", slider1.sliderKeyboardControl);
 
