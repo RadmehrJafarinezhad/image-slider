@@ -6,10 +6,12 @@ class Slider {
     count = 0;
     imageIDs = [];
     interval = null;
+    class = ["absolute","top-0","left-0","w-[300px]","h-[200px]","sm:w-[500px]","sm:h-[300px]","object-cover","duration-1000","ease-in-out"]
     #lastTransition = null;
     #imgCount = null;
 
-    constructor(rootID, pics, dotContainerID, transition) {
+
+    constructor(rootID = String, pics = String, dotContainerID = String, transition = String) {
         this.rootID = rootID
         this.pics = pics
         this.dotContainerID = dotContainerID
@@ -30,11 +32,16 @@ class Slider {
 
         }
 
+        document.addEventListener("keydown", this.sliderKeyboardControl);
+
         this.createImgs();
         this.createDots();
+        this.autoPlay();
     }
 
     createImgs() {
+
+        this.imageIDs = [];
 
         this.root.innerHTML = "";
 
@@ -47,17 +54,7 @@ class Slider {
 
 
             let imgClasses = [
-                "absolute",
-                "top-0",
-                "left-0",
-                "w-[300px]",
-                "h-[200px]",
-                "sm:w-[500px]",
-                "sm:h-[300px]",
 
-                "object-cover",
-                "duration-1000",
-                "ease-in-out",
                 this.class
             ].flat();
 
@@ -124,15 +121,35 @@ class Slider {
 
     goToID(value) {
 
+
+        if (value < this.count) {
+            this.currentTransition(this.transition, "hide", "prev")
+        } else if (value > this.count) {
+            this.currentTransition(this.transition, "hide", "next")
+        } else {
+            this.startAutoPlay();
+            return
+        }
+
+        let prevCount = this.count;
+
         this.count = value;
 
-        this.slideConfig()
+        if (prevCount > this.count) {
 
-        this.startAutoPlay();
+            this.currentTransition(this.transition, "show", "prev")
+
+        } else if (prevCount < this.count) {
+
+            this.currentTransition(this.transition, "show", "next")
+
+        }
+
+        this.slideConfig();
     }
     goNext() {
 
-        this.currentTransition(this.transition,"hide","next")
+        this.currentTransition(this.transition, "hide", "next")
 
         if (this.count < this.imageIDs.length - 1) {
 
@@ -142,13 +159,13 @@ class Slider {
             this.count = 0;
         }
 
-        this.currentTransition(this.transition,"show","next")
+        this.currentTransition(this.transition, "show", "next")
         this.slideConfig()
     }
 
     goPrev() {
 
-        this.currentTransition(this.transition,"hide","prev");
+        this.currentTransition(this.transition, "hide", "prev");
 
         if (this.count > 0) {
             this.count--
@@ -156,7 +173,7 @@ class Slider {
             this.count = this.imageIDs.length - 1;
         }
 
-        this.currentTransition(this.transition,"show","prev");
+        this.currentTransition(this.transition, "show", "prev");
         this.slideConfig()
 
     }
@@ -175,13 +192,13 @@ class Slider {
     autoPlay() {
         if (this.interval) return;
 
-        this.interval = setInterval(() => this.goNext(false), 4000)
+        this.interval = setInterval(() => this.goNext(), 8000)
     }
 
     startAutoPlay() {
         clearInterval(this.interval);
 
-        this.interval = setInterval(() => this.goNext(), 2000);
+        this.interval = setInterval(() => this.goNext(), 8000);
     }
 
     stopAutoPlay() {
@@ -200,7 +217,7 @@ class Slider {
 
         this.startAutoPlay();
     }
-    currentTransition(value, action,arrow) {
+    currentTransition(value, action, arrow = null) {
 
         this.#imgCount = this.imageIDs[this.count];
 
@@ -222,18 +239,18 @@ class Slider {
 
             this.#imgCount = this.imageIDs[this.count];
 
-            switch(action) {
+            switch (action) {
 
                 case "hide":
-                    switch(arrow){
+                    switch (arrow) {
 
                         case "prev":
-                            document.getElementById(this.#imgCount).classList.replace("translate-x-0","-translate-x-full");
+                            document.getElementById(this.#imgCount).classList.replace("translate-x-0", "-translate-x-full");
                             this.#lastTransition = "-translate-x-full";
                             break;
 
                         case "next":
-                            document.getElementById(this.#imgCount).classList.replace("translate-x-0","translate-x-full");
+                            document.getElementById(this.#imgCount).classList.replace("translate-x-0", "translate-x-full");
                             this.#lastTransition = "translate-x-full";
                             break;
 
@@ -242,11 +259,9 @@ class Slider {
 
                 case "show":
 
-                    const img = document.getElementById(this.#imgCount);
+                    document.getElementById(this.#imgCount).classList.remove("", "translate-x-full")
 
-                    document.getElementById(this.#imgCount).classList.remove("-translate-x-full","translate-x-full")
-
-                    document.getElementById(this.#imgCount).classList.add( "translate-x-0");
+                    document.getElementById(this.#imgCount).classList.add("translate-x-0");
                     break;
             }
         }

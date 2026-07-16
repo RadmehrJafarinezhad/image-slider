@@ -1,0 +1,27 @@
+.slider-container {
+    @apply relative mx-auto mt-5 w-fit border-2 border-black rounded-xl shadow-lg shadow-black;
+}
+
+.img-container {
+    @apply relative overflow-hidden w-[300px] h-[200px] sm:w-[500px] sm:h-[300px];
+}
+
+.slider-img {
+    @apply w-[300px] h-[200px] sm:w-[500px] sm:h-[300px] rounded-xl object-cover transition-opacity duration-500 ease-linear;
+}
+
+.slider-btn {
+    @apply absolute top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-slate-300 text-sm opacity-50 hover:opacity-100;
+}
+
+.slider-btn-right {
+    @apply right-2;
+}
+
+.slider-btn-left {
+    @apply left-2;
+}
+
+.dot-container {
+    @apply absolute bottom-2 left-1/2 -translate-x-1/2 w-fit mx-auto transition-all duration-100 ease-out;
+}
