@@ -1,9 +1,9 @@
 {
-    "sliderImages" : [
-        "/img/test1.jpg",
-        "/img/test2.jpg",
-        "/img/test3.jpg",
-        "/img/test4.jpg",
-        "/img/test5.jpg"
+    "sliderImages": [
+        "https://radmehrjafarinezhad.github.io/image-slider/img/test1.jpg",
+        "https://radmehrjafarinezhad.github.io/image-slider/img/test2.jpg",
+        "https://radmehrjafarinezhad.github.io/image-slider/img/test3.jpg",
+        "https://radmehrjafarinezhad.github.io/image-slider/img/test4.jpg",
+        "https://radmehrjafarinezhad.github.io/image-slider/img/test5.jpg"
     ]
 }
