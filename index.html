@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module" src="app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="sliderFiles/style.css">
     <title>Document</title>
 </head>
+
 <body>
-    <div class="slider-container" id="slider-container">
-
-        <div class="img-container" id="img-container">
-            <img src="img/loading.gif" alt="" id="slider-img" class="slider-img">
+    <div class="relative overflow-hidden mx-auto mt-5 w-fit border-black border-2 shadow-lg shadow-black rounded-xl" id="slider-container">
+        <div id="img-container" class="relative overflow-hidden w-[300px] h-[200px] sm:w-[500px] sm:h-[300px]">
+            <img src="img/loading.gif" alt="" id="slider-img"
+                class=" w-[300px] h-[200px] sm:w-[500px] sm:h-[300px] rounded-xl transition-opacity ease-linear duration-500 object-cover">
         </div>
-
-        <button id="right-slider-btn" class="slider-btn slider-btn-right">
+        <button id="right-slider-btn"
+            class="flex absolute top-1/2 right-2 -translate-y-1/2  bg-slate-300 w-10 h-10 text-center justify-center items-center  rounded-[100%] text-sm opacity-50 hover:opacity-100">
             <i class="fa-solid fa-chevron-right"></i>
         </button>
-
-        <button id="left-slider-btn" class="slider-btn slider-btn-left">
+        <button id="left-slider-btn"
+            class="absolute top-1/2 left-2 -translate-y-1/2 bg-slate-300 w-10 h-10 text-center justify-center items-center  rounded-[100%] text-sm opacity-50 hover:opacity-100">
             <i class="fa-solid fa-chevron-left"></i>
         </button>
-
-        <div id="dot-container" class="dot-container"></div>
-
+        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-fit mx-auto transition-all ease-out duration-100"
+            id="dot-container">
+        </div>
+        <p class="absolute top-2 left-2 w-fit px-3 rounded-xl text-black bg-white" id="count"></p>
     </div>
+
+
+    <script type="module" src="app.js"></script>
 </body>
 
 </html>

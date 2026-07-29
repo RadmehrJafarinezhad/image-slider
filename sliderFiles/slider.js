@@ -6,40 +6,41 @@ class Slider {
     count = 0;
     imageIDs = [];
     interval = null;
-    class = ["absolute","top-0","left-0","w-[300px]","h-[200px]","sm:w-[500px]","sm:h-[300px]","object-cover","duration-1000","ease-in-out"]
-    #lastTransition = null;
+    #imagesClasses = ["absolute", "top-0", "left-0", "w-[300px]", "h-[200px]", "sm:w-[500px]", "sm:h-[300px]", "object-cover", "duration-1000", "ease-in-out", "opacity-0", "transition-opacity"];
+    #dotsClass = ["dot", "h-3", "w-3", "sm:w-4", "sm:h-4", "m-2", "bg-white", "rounded-[100%]", "shadow", "shadow-black", "shadow-lg", "border-gray-200", "border-[1px]", "hover:scale-125", "transition-transform", "duration-100"]
     #imgCount = null;
+    #delay = 3000;
 
 
-    constructor(rootID = String, pics = String, dotContainerID = String, transition = String) {
+    constructor({ rootID = "", pics = [], dotContainerID = "", pTagID = "", rightButtonID = "", leftButtonID = "", delay = 0 }) {
+
         this.rootID = rootID
         this.pics = pics
         this.dotContainerID = dotContainerID
 
         this.root = document.getElementById(this.rootID);
+
         this.dotContainer = document.getElementById(this.dotContainerID);
 
-        this.transition = transition;
+        this.#delay = delay;
 
-        if (this.transition == "fade") {
+        this.pCount = document.getElementById(pTagID);
 
-            this.class = ["opacity-0", "transition-opacity"];
+        this.rightButton = document.getElementById(rightButtonID);
+        this.leftButton = document.getElementById(leftButtonID);
 
-        } else if (this.transition == "wipe") {
+        this.rightButton.addEventListener("click", () => this.nextSlide())
+        this.leftButton.addEventListener("click", () => this.previousSlide())
 
-            this.class = "translate-x-full";
-            this.#lastTransition = "translate-x-full";
+        document.addEventListener("keydown", event => this.handleKeyboardNavigation(event));
 
-        }
-
-        document.addEventListener("keydown", this.sliderKeyboardControl);
-
-        this.createImgs();
+        this.createImages();
         this.createDots();
+
         this.autoPlay();
     }
 
-    createImgs() {
+    createImages() {
 
         this.imageIDs = [];
 
@@ -53,34 +54,20 @@ class Slider {
             newImage.setAttribute("id", `img${i}`);
 
 
-            let imgClasses = [
-
-                this.class
-            ].flat();
-
-            newImage.classList.add(...imgClasses);
+            newImage.classList.add(...this.#imagesClasses);
 
             this.root.appendChild(newImage);
 
             this.imageIDs.push(newImage.id);
-            console.log(this.imageIDs);
 
 
         }
 
         this.#imgCount = this.imageIDs[this.count];
 
-        switch (this.transition) {
 
-            case "fade":
-                document.getElementById(this.#imgCount).classList.remove("opacity-0");
-                break;
 
-            case "wipe":
-                document.getElementById(this.#imgCount).classList.replace("translate-x-full", "translate-x-0");
-                break;
-
-        }
+        document.getElementById(this.#imgCount).classList.remove("opacity-0");
     }
     createDots() {
 
@@ -91,65 +78,36 @@ class Slider {
 
             let dot_ID = `dot${i}`;
             dot.addEventListener("click", () => {
-                this.goToID(i)
+                this.goToSlide(i)
             });
-            dot.classList.add(
-                "dot",
-                "h-3",
-                "w-3",
-                "sm:w-4",
-                "sm:h-4",
-                "m-2",
-                "bg-white",
-                "rounded-[100%]",
-                "shadow",
-                "shadow-black",
-                "shadow-lg",
-                "border-gray-200",
-                "border-[1px]",
-                "hover:scale-125",
-                "transition-transform",
-                "duration-100"
-            );
+            dot.classList.add(...this.#dotsClass);
 
             dot.setAttribute("id", dot_ID)
             this.dotContainer.appendChild(dot)
-            console.log(dot)
         }
         document.getElementById("dot0").classList.add("scale-125");
     }
 
-    goToID(value) {
+    goToSlide(value) {
 
 
-        if (value < this.count) {
-            this.currentTransition(this.transition, "hide", "prev")
-        } else if (value > this.count) {
-            this.currentTransition(this.transition, "hide", "next")
+        if (value < this.count || value > this.count) {
+            this.setSlideVisibility("hide")
         } else {
             this.startAutoPlay();
             return
         }
 
-        let prevCount = this.count;
-
         this.count = value;
 
-        if (prevCount > this.count) {
 
-            this.currentTransition(this.transition, "show", "prev")
+        this.setSlideVisibility("show")
 
-        } else if (prevCount < this.count) {
-
-            this.currentTransition(this.transition, "show", "next")
-
-        }
-
-        this.slideConfig();
+        this.updateSliderState();
     }
-    goNext() {
+    nextSlide() {
 
-        this.currentTransition(this.transition, "hide", "next")
+        this.setSlideVisibility("hide")
 
         if (this.count < this.imageIDs.length - 1) {
 
@@ -159,13 +117,13 @@ class Slider {
             this.count = 0;
         }
 
-        this.currentTransition(this.transition, "show", "next")
-        this.slideConfig()
+        this.setSlideVisibility("show")
+        this.updateSliderState()
     }
 
-    goPrev() {
+    previousSlide() {
 
-        this.currentTransition(this.transition, "hide", "prev");
+        this.setSlideVisibility("hide");
 
         if (this.count > 0) {
             this.count--
@@ -173,36 +131,39 @@ class Slider {
             this.count = this.imageIDs.length - 1;
         }
 
-        this.currentTransition(this.transition, "show", "prev");
-        this.slideConfig()
+        this.setSlideVisibility("show");
+        this.updateSliderState()
+
 
     }
 
-    sliderKeyboardControl(event) {
+    handleKeyboardNavigation(event) {
 
         if (event.key == "ArrowRight") {
-            this.goNext();
+            this.nextSlide();
         }
 
         else if (event.key == "ArrowLeft") {
-            this.goPrev();
+            this.previousSlide();
         }
 
     }
-    autoPlay() {
-        if (this.interval) return;
 
-        this.interval = setInterval(() => this.goNext(), 8000)
+    autoPlay() {
+
+        if (this.interval) {
+            return;
+        }
+
+        this.interval = setInterval(() => {
+            this.nextSlide();
+        }, this.#delay);
     }
 
     startAutoPlay() {
         clearInterval(this.interval);
 
-        this.interval = setInterval(() => this.goNext(), 8000);
-    }
-
-    stopAutoPlay() {
-        clearInterval(this.interval);
+        this.interval = setInterval(() => this.nextSlide(), this.#delay);
     }
 
     updateDots() {
@@ -211,59 +172,29 @@ class Slider {
         document.getElementById(`dot${this.count}`).classList.add("scale-125")
 
     }
-    slideConfig() {
+    updateSliderState() {
 
         this.updateDots();
 
         this.startAutoPlay();
+
+        this.pCount.textContent = `${this.count + 1} / ${this.imageIDs.length}`
     }
-    currentTransition(value, action, arrow = null) {
+    setSlideVisibility(action) {
 
         this.#imgCount = this.imageIDs[this.count];
 
-        if (value == "fade") {
 
-            if (action == "hide") {
+        if (action == "hide") {
 
-                document.getElementById(this.#imgCount).classList.add("opacity-0");
+            document.getElementById(this.#imgCount).classList.add("opacity-0");
 
-            }
+        }
 
-            if (action == "show") {
+        if (action == "show") {
 
-                document.getElementById(this.#imgCount).classList.remove("opacity-0");
+            document.getElementById(this.#imgCount).classList.remove("opacity-0");
 
-            }
-
-        } else if (value == "wipe") {
-
-            this.#imgCount = this.imageIDs[this.count];
-
-            switch (action) {
-
-                case "hide":
-                    switch (arrow) {
-
-                        case "prev":
-                            document.getElementById(this.#imgCount).classList.replace("translate-x-0", "-translate-x-full");
-                            this.#lastTransition = "-translate-x-full";
-                            break;
-
-                        case "next":
-                            document.getElementById(this.#imgCount).classList.replace("translate-x-0", "translate-x-full");
-                            this.#lastTransition = "translate-x-full";
-                            break;
-
-                    }
-                    break;
-
-                case "show":
-
-                    document.getElementById(this.#imgCount).classList.remove("", "translate-x-full")
-
-                    document.getElementById(this.#imgCount).classList.add("translate-x-0");
-                    break;
-            }
         }
     }
 }
